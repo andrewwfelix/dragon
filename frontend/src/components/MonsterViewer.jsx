@@ -209,14 +209,14 @@ function MonsterViewer() {
               {currentMonster.damage_vulnerabilities && (
                 <div className="p-1 bg-gray-700 rounded">
                   <div className="text-gray-300 text-sm">
-                    <span className="text-red-400 font-bold">Vulnerabilities:</span> {currentMonster.damage_vulnerabilities}
+                    <span className="text-red-400">Vulnerabilities:</span> {currentMonster.damage_vulnerabilities}
                   </div>
                 </div>
               )}
               {currentMonster.damage_resistances && (
                 <div className="p-1 bg-gray-700 rounded">
                   <div className="text-gray-300 text-sm">
-                    <span className="text-blue-400 font-bold">Resistances:</span> {currentMonster.damage_resistances}
+                    <span className="text-blue-400">Resistances:</span> {currentMonster.damage_resistances}
                   </div>
                 </div>
               )}
