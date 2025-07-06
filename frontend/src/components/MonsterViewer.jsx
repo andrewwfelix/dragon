@@ -109,6 +109,27 @@ function MonsterViewer() {
         </div>
       </div>
 
+      {/* Monster Description */}
+      {(currentMonster.desc || currentMonster.legendary_desc) && (
+        <div className="bg-gray-800 border border-gray-700 rounded p-3 mb-2">
+          <h2 className="text-white mb-2 font-bold text-sm">Description</h2>
+          <div className="text-gray-300 text-sm leading-relaxed">
+            {currentMonster.desc && (
+              <div className="mb-2">
+                {currentMonster.desc}
+              </div>
+            )}
+            {currentMonster.legendary_desc && (
+              <div>
+                <span className="text-blue-400 font-bold">Legendary:</span> {currentMonster.legendary_desc}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+
+
       {/* Two Column Layout - Left 1/4, Right 3/4 */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-2">
         {/* Left Column - Stats and Skills (1/4 width) */}
