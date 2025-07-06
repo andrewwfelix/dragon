@@ -1,0 +1,19 @@
+{
+  "name": "dragon-dnd-services",
+  "version": "1.0.0",
+  "description": "Business logic services for D&D 5e Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "joi": "^17.11.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+} 
