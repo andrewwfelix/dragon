@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   plugins: [react()],
   define: {
-    'import.meta.env.VITE_APP_VERSION': JSON.stringify('1.0.2')
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify('1.0.3')
   },
   resolve: {
     alias: {
