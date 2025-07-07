@@ -1,6 +1,6 @@
 {
   "name": "dragon-dnd-frontend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Frontend for D&D 5e Application",
   "private": true,
   "scripts": {
@@ -20,7 +20,8 @@
     "zustand": "^4.4.7",
     "lucide-react": "^0.294.0",
     "clsx": "^2.0.0",
-    "tailwind-merge": "^2.0.0"
+    "tailwind-merge": "^2.0.0",
+    "react-markdown": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
