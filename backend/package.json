@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "build": "echo 'Backend build complete - Node.js apps run directly'",
     "test": "jest",
     "test:endpoints": "node test-endpoints.js",
     "test:openai": "node ../scripts/test-openai-connection.js"
