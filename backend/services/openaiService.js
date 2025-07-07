@@ -1,6 +1,9 @@
 const OpenAI = require('openai');
 const path = require('path');
 
+// Load environment variables first
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -20,45 +23,57 @@ async function generateMonsterVisualDescription(monsterName, existingDescription
     focus = 'visual'     // 'visual', 'threatening', 'mysterious'
   } = options;
 
-  const systemPrompt = `You are a master D&D dungeon master who specializes in creating vivid, detailed visual descriptions of monsters. Your goal is to describe exactly what a monster looks like based on its established lore, focusing purely on physical appearance and visual characteristics.
+  const systemPrompt = `You are an experienced D&D dungeon master who translates monster descriptions into clear instructions for artists. Your goal is to take the D&D monster lore and convert it into specific visual instructions for creating small 2"x2" icon-style images.
 
 Guidelines:
-- **Detailed Physical Description**: Focus on size, shape, color, texture, and distinctive features
-- **Visual Accuracy**: Stay true to the monster's established D&D characteristics
-- **Sensory Details**: Describe what can be seen, touched, and observed
-- **Distinctive Elements**: Highlight unique visual traits that make this monster recognizable
-- **No Artistic Style**: Avoid describing how something should be drawn or rendered
+- **Artist Instructions Format**: Write as "Draw a [monster name] that looks like this..."
+- **Icon-Sized Focus**: These are small 2"x2" icons, so focus on the most recognizable, essential elements
+- **Silhouette-Friendly**: Emphasize distinctive shapes and forms that work well at small sizes
+- **Color-Critical**: Include the most important colors that define the creature
+- **Accurate to Lore**: Stay true to the monster's established D&D characteristics
+- **No Artistic Style**: Don't tell the artist HOW to draw it, just WHAT to draw
 
-Description Approaches:
-- **Cinematic**: Describe the monster as if seen in a clear, well-lit environment
-- **Atmospheric**: Emphasize the visual impact and presence of the creature
-- **Detailed**: Comprehensive breakdown of all visible features and characteristics
+What to Include (Icon-Sized Priority):
+- Most distinctive physical feature (head shape, body type, wings, etc.)
+- Primary colors and patterns that define the creature
+- Key distinguishing features (horns, spikes, scales, etc.)
+- Overall silhouette and proportions
+- Any unique visual elements that make it recognizable
+
+What NOT to Include:
+- Fine details that won't be visible at 2"x2"
+- Artistic style or rendering technique
+- Lighting or mood
+- Environmental context
+- Action or pose
+- Background elements
+- Minor details or textures
 
 Length Guidelines:
-- **Short**: 1-2 sentences, essential visual elements only
-- **Medium**: 2-3 sentences, balanced detail
-- **Long**: 3-4 sentences, comprehensive visual description
+- **Short**: Essential recognizable elements only (1 short sentence)
+- **Medium**: Key visual elements for small icons (1 sentence)
+- **Long**: Comprehensive but icon-appropriate details (1-2 short sentences)
 
 Focus Areas:
-- **Visual**: Emphasize appearance, form, and distinctive features
-- **Threatening**: Highlight intimidating visual aspects
-- **Mysterious**: Focus on enigmatic visual qualities
+- **Visual**: Emphasize the most recognizable appearance elements
+- **Threatening**: Highlight intimidating visual aspects that work at small size
+- **Mysterious**: Focus on enigmatic visual qualities visible in icons
 
-Write in present tense, describing the monster's actual physical appearance.`;
+Write as clear instructions for creating a small, recognizable icon of the monster.`;
 
   const lengthTokens = {
-    short: 100,
-    medium: 150,
-    long: 200
+    short: 50,
+    medium: 75,
+    long: 100
   };
 
-  const userPrompt = `Create a ${style} visual description of a ${monsterName} based on this existing lore:
+  const userPrompt = `Create artist instructions for drawing a small 2"x2" icon of a ${monsterName} based on this existing lore:
 
 "${existingDescription}"
 
-Focus on: ${focus === 'visual' ? 'physical appearance, size, shape, color, and distinctive features' : focus === 'threatening' ? 'intimidating visual aspects and frightening appearance' : 'mysterious visual qualities and otherworldly features'}
+Focus on: ${focus === 'visual' ? 'the most recognizable visual elements that work at small size' : focus === 'threatening' ? 'intimidating visual aspects visible in icons' : 'mysterious visual qualities that stand out at small size'}
 
-Generate a ${length} description that accurately describes what this monster looks like physically. Focus on concrete visual details that could be used to identify or recognize the creature.`;
+Generate a ${length} set of instructions for creating a small, recognizable icon. Start with "Draw a [monster name] that looks like this..." and then provide ONLY the most essential visual details that would make this creature recognizable at 2"x2" size. Keep it very brief and focus on distinctive shapes, key colors, and defining features. Do not include fine details, artistic direction, lighting, mood, or environmental context.`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -193,7 +208,7 @@ module.exports = {
 
 // Run test if called directly
 if (require.main === module) {
-  require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
+  require('dotenv').config({ path: path.join(__dirname, '../backend/.env') });
   testVisualDescriptionService()
     .then(() => {
       console.log('\n✨ Test completed!');

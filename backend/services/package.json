@@ -8,12 +8,14 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "dotenv": "^17.0.1",
     "joi": "^17.11.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "openai": "^5.8.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0"
   }
-} 
+}

@@ -157,7 +157,7 @@ function MonsterViewer() {
           <div className="text-gray-300 text-sm leading-relaxed">
             {currentMonster.desc && currentMonster.desc !== 'False' && (
               <div className="mb-3">
-                <span className="text-blue-400 font-bold">Description:</span>
+                <span className="text-blue-400 font-bold">Description: </span>
                 <div className="inline">
                   <ReactMarkdown>{currentMonster.desc}</ReactMarkdown>
                 </div>
@@ -165,7 +165,7 @@ function MonsterViewer() {
             )}
             {currentMonster.legendary_desc && (
               <div>
-                <span className="text-blue-400 font-bold">Legendary:</span>
+                <span className="text-blue-400 font-bold">Legendary: </span>
                 <div className="inline">
                   <ReactMarkdown>{currentMonster.legendary_desc}</ReactMarkdown>
                 </div>

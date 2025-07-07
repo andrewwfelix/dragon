@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
-const { generateMonsterVisualDescription, batchGenerateVisualDescriptions } = require('../services/openaiService');
-require('dotenv').config({ path: '../.env.local' });
+const { generateMonsterVisualDescription, batchGenerateVisualDescriptions } = require('./services/openaiService');
+require('dotenv').config({ path: './.env' });
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -22,7 +22,7 @@ async function fetchMonstersWithoutVisualDescriptions(limit = 10) {
   try {
     const { data, error } = await supabase
       .from('monsters')
-      .select('id, name, desc, visual_description')
+      .select('id, name, data, visual_description')
       .or('visual_description.is.null,visual_description.eq.')
       .limit(limit);
     
@@ -82,7 +82,7 @@ async function generateAndUpdateVisualDescriptions(options = {}) {
         // Generate visual description
         const visualDescription = await generateMonsterVisualDescription(
           monster.name,
-          monster.desc || 'No description available',
+          monster.data?.desc || 'No description available',
           {
             style: options.style || 'cinematic',
             length: options.length || 'medium',
