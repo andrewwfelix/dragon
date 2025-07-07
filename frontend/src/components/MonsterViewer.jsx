@@ -6,24 +6,10 @@ function MonsterViewer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [monsterCount, setMonsterCount] = useState(0);
-  const [isFetching, setIsFetching] = useState(false);
   const [typeIconUrl, setTypeIconUrl] = useState(null);
   const [lastRequestTime, setLastRequestTime] = useState(0);
 
   const fetchRandomMonster = async () => {
-    // Prevent multiple simultaneous requests
-    if (isFetching) return;
-    
-    // Rate limiting: ensure at least 2 seconds between requests
-    const now = Date.now();
-    const timeSinceLastRequest = now - lastRequestTime;
-    if (timeSinceLastRequest < 2000) {
-      const waitTime = 2000 - timeSinceLastRequest;
-      console.log(`Rate limiting: waiting ${waitTime}ms before next request`);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
-    }
-    
-    setIsFetching(true);
     setLoading(true);
     setError(null);
     setLastRequestTime(Date.now());
@@ -52,15 +38,10 @@ function MonsterViewer() {
       setError(error.message || 'Failed to load monster');
     } finally {
       setLoading(false);
-      setIsFetching(false);
     }
   };
 
-  const nextMonster = () => {
-    // Prevent rapid clicking
-    if (isFetching) return;
-    fetchRandomMonster();
-  };
+
 
   useEffect(() => {
     fetchRandomMonster();
@@ -195,19 +176,7 @@ function MonsterViewer() {
               <h1 className="text-2xl font-bold text-white">{currentMonster.name}</h1>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={nextMonster}
-              disabled={isFetching}
-              className={`px-4 py-1 rounded font-bold text-sm transition-colors duration-200 ${
-                isFetching 
-                  ? 'bg-gray-500 cursor-not-allowed' 
-                  : 'bg-blue-600 hover:bg-blue-500 text-white'
-              }`}
-            >
-              {isFetching ? 'Loading...' : 'Random Monster →'}
-            </button>
-          </div>
+
         </div>
       </div>
 
