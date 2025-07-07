@@ -1,0 +1,176 @@
+{
+  "name": "Halibur",
+  "race": "Halfling",
+  "class": "Guard",
+  "level": 3,
+  "xp": 900,
+  "personality": [
+    "Humorless",
+    "Considerate"
+  ],
+  "languages": [
+    "Common",
+    "Halfling",
+    "Draconic"
+  ],
+  "features_traits": [
+    "Alert",
+    "Brave",
+    "Halfling-nimble",
+    "Luck (Reroll)",
+    "Stealthy"
+  ],
+  "armor_class": 16,
+  "armor_class_notes": "Chain Mail AC is fixed at 16; Dexterity modifier is +0",
+  "initiative": 0,
+  "hit_dice": 24,
+  "speed": 30,
+  "proficiency_bonus": 2,
+  "ability_scores": {
+    "Strength": {
+      "score": 17,
+      "modifier": 3,
+      "saving_throw_proficient": true,
+      "notes": "Primary stat for melee attacks and damage"
+    },
+    "Dexterity": {
+      "score": 11,
+      "modifier": 0,
+      "saving_throw_proficient": false,
+      "notes": "Used for ranged attacks and AC"
+    },
+    "Constitution": {
+      "score": 13,
+      "modifier": 1,
+      "saving_throw_proficient": true,
+      "notes": "Affects hit points and Constitution saves"
+    },
+    "Intelligence": {
+      "score": 16,
+      "modifier": 3,
+      "saving_throw_proficient": false,
+      "notes": "Used for knowledge skills, saves, spell DC"
+    },
+    "Wisdom": {
+      "score": 10,
+      "modifier": 0,
+      "saving_throw_proficient": false,
+      "notes": "Used for perception, insight, and some saves"
+    },
+    "Charisma": {
+      "score": 8,
+      "modifier": -1,
+      "saving_throw_proficient": false,
+      "notes": "Affects social interactions and Charisma saves"
+    }
+  },
+  "proficiencies": {
+    "skills": [
+      "Athletics",
+      "History",
+      "Animal Handling",
+      "Perception",
+      "Survival"
+    ]
+  },
+  "class_features": {
+    "Second Wind": "Bonus action to regain 1d10 + fighter level HP once per short/long rest",
+    "Action Surge": "Take one extra action (not magical) once per short/long rest"
+  },
+  "maneuvers": [
+    {
+      "name": "Menacing Attack",
+      "effect": "Add Superiority Die to damage; target must make Wisdom save or be frightened until end of next turn"
+    },
+    {
+      "name": "Disarming Attack",
+      "effect": "Add Superiority Die to damage; next attack against target before your next turn has Advantage"
+    },
+    {
+      "name": "Trip Attack",
+      "effect": "Add Superiority Die to damage; target must make Strength save or be knocked prone"
+    }
+  ],
+  "equipment": {
+    "armor": [
+      "Chain Mail"
+    ],
+    "weapons": [
+      {
+        "name": "Greatsword",
+        "ability": "Strength",
+        "proficiency_bonus": 2,
+        "attack_bonus": 5,
+        "damage": "2d6 + 3",
+        "notes": "Melee only"
+      },
+      {
+        "name": "Spear",
+        "ability": "Strength",
+        "proficiency_bonus": 2,
+        "attack_bonus": 5,
+        "damage": "1d8 + 3",
+        "notes": "Can be thrown (20/60), or used one-handed or two-handed"
+      },
+      {
+        "name": "Light Crossbow",
+        "ability": "Dexterity",
+        "proficiency_bonus": 2,
+        "attack_bonus": 2,
+        "damage": "1d8",
+        "notes": "Ranged weapon (80/320 ft)"
+      },
+      {
+        "name": "Sunpiercer",
+        "ability": "Strength",
+        "magic_bonus": 1,
+        "proficiency_bonus": 2,
+        "attack_bonus": 6,
+        "damage": "2d8 radiant",
+        "charges": 3,
+        "regain_per_day": "1d3",
+        "light_radius": {
+          "bright": 10,
+          "dim": 10,
+          "type": "sunlight"
+        },
+        "can_suppress_light": true,
+        "is_magical": true,
+        "can_overcome_resistance": true,
+        "description": "Sunpiercer is a rare, magical spear crafted from polished white ash with silver inlays and tipped with a radiant crystal spearhead. It glows with a warm, inner light. While wielding Sunpiercer, you emit bright light for 10 feet and dim light for another 10 feet. This light counts as sunlight, can be toggled as a bonus action, and is useful for dispelling magical darkness and damaging sunlight-sensitive creatures. The weapon grants +1 to attack and damage rolls, and allows the wielder to expend 1 charge to deal an extra 2d8 radiant damage. It regains 1d3 charges at dawn. Lore speaks of it being forged from celestial forces and used to banish shadows, ward off darkness, and reveal hidden truths. It glows more brightly in the presence of evil or deceit."
+      }
+    ],
+    "other": [
+      "Flail",
+      "Dungeoneer\u2019s pack"
+    ]
+  },
+  "resources": {
+    "Superiority Dice": {
+      "uses": 4,
+      "reset": "Short Rest",
+      "notation": {
+        "MA": "Menacing Attack",
+        "DA": "Disarming Attack",
+        "TA": "Trip Attack"
+      }
+    },
+    "Action Surge": {
+      "uses": 1,
+      "reset": "Short or Long Rest"
+    },
+    "Second Wind": {
+      "uses": 2,
+      "reset": "R1S/R2L"
+    }
+  },
+  "rest_tracking": {
+    "format": "Each column is a rest event; use S or L at top, mark 'X' for use, 'r' for regain",
+    "tracker_fields": [
+      "Superiority Die",
+      "Action Surge",
+      "Second Wind"
+    ]
+  },
+  "campaign_notes": ""
+}
