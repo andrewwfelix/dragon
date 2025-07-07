@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sword, Users, BookOpen, Zap, Home, Menu, X } from 'lucide-react';
 
+// Import version from package.json
+const version = import.meta.env.VITE_APP_VERSION || '1.0.0';
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -49,14 +52,24 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300 hover:text-white p-2"
-            >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+          {/* Version and Mobile menu button */}
+          <div className="flex items-center space-x-4">
+            {/* Version number */}
+            <div className="hidden sm:block">
+              <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
+                v{version}
+              </span>
+            </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-gray-300 hover:text-white p-2"
+              >
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -64,6 +77,10 @@ const Navbar = () => {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-700">
+              {/* Version number for mobile */}
+              <div className="px-3 py-2">
+                <span className="text-xs text-gray-400">v{version}</span>
+              </div>
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
