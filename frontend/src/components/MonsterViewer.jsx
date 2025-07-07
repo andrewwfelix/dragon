@@ -7,20 +7,32 @@ function MonsterViewer() {
   const [error, setError] = useState(null);
   const [monsterCount, setMonsterCount] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+  const [typeIconUrl, setTypeIconUrl] = useState(null);
+  const [lastRequestTime, setLastRequestTime] = useState(0);
 
   const fetchRandomMonster = async () => {
     // Prevent multiple simultaneous requests
     if (isFetching) return;
     
+    // Rate limiting: ensure at least 2 seconds between requests
+    const now = Date.now();
+    const timeSinceLastRequest = now - lastRequestTime;
+    if (timeSinceLastRequest < 2000) {
+      const waitTime = 2000 - timeSinceLastRequest;
+      console.log(`Rate limiting: waiting ${waitTime}ms before next request`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
     setIsFetching(true);
     setLoading(true);
     setError(null);
+    setLastRequestTime(Date.now());
     
     try {
       const response = await fetch('/api/monsters');
       if (!response.ok) {
         if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please wait a moment before trying again.');
+          throw new Error('Rate limit exceeded. Please wait 30 seconds before trying again.');
         }
         throw new Error('Failed to fetch random monster');
       }
@@ -45,12 +57,53 @@ function MonsterViewer() {
   };
 
   const nextMonster = () => {
+    // Prevent rapid clicking
+    if (isFetching) return;
     fetchRandomMonster();
   };
 
   useEffect(() => {
     fetchRandomMonster();
   }, []);
+
+  // Fetch the icon image for the current monster type
+  useEffect(() => {
+    async function fetchTypeIcon(type) {
+      if (!type) {
+        return setTypeIconUrl(null);
+      }
+      
+      // Rate limiting: ensure at least 1 second between icon requests
+      const now = Date.now();
+      const timeSinceLastRequest = now - lastRequestTime;
+      if (timeSinceLastRequest < 1000) {
+        const waitTime = 1000 - timeSinceLastRequest;
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+      
+      try {
+        const url = `/api/monsters/type-icon/${encodeURIComponent(type)}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          if (res.status === 429) {
+            console.log('Rate limited on icon fetch, skipping...');
+            return setTypeIconUrl(null);
+          }
+          return setTypeIconUrl(null);
+        }
+        const data = await res.json();
+        setTypeIconUrl(data.icon_image || null);
+      } catch (error) {
+        console.error('Error fetching type icon:', error);
+        setTypeIconUrl(null);
+      }
+    }
+    if (currentMonster && currentMonster.type) {
+      fetchTypeIcon(currentMonster.type);
+    } else {
+      setTypeIconUrl(null);
+    }
+  }, [currentMonster?.type, lastRequestTime]);
 
   const getModifier = (score) => {
     const modifier = Math.floor((score - 10) / 2);
@@ -122,20 +175,27 @@ function MonsterViewer() {
       {/* Single Top Container */}
       <div className="bg-gray-800 border border-gray-700 rounded p-2 mb-2">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">{currentMonster.name}</h1>
+          <div className="flex items-center gap-3">
+            {/* Monster Type Icon */}
+            {typeIconUrl && (
+              <div className="flex-shrink-0">
+                <img
+                  src={typeIconUrl}
+                  alt={`${currentMonster.type} icon`}
+                  className="w-12 h-12 object-contain rounded shadow-lg border border-gray-700 bg-black"
+                  style={{ background: 'black' }}
+                  onError={(e) => {
+                    console.log('❌ Image failed to load:', e.target.src);
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-white">{currentMonster.name}</h1>
+            </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="px-2 py-1 bg-blue-600 text-white rounded text-sm font-medium">
-              {currentMonster.type}
-              {currentMonster.subtype && <span className="text-gray-200"> ({currentMonster.subtype})</span>}
-            </div>
-            <div className="px-3 py-1 bg-blue-600 text-white rounded font-bold text-sm">
-              CR {currentMonster.challenge_rating}
-            </div>
-            <div className="px-2 py-1 bg-gray-600 text-gray-200 rounded text-xs">
-              {currentMonster.size}
-            </div>
             <button
               onClick={nextMonster}
               disabled={isFetching}
@@ -209,6 +269,21 @@ function MonsterViewer() {
               <div className="flex justify-between items-center p-1 bg-gray-700 rounded">
                 <span className="text-gray-300 text-sm">AC:</span>
                 <span className="text-white font-bold">{currentMonster.armor_class}</span>
+              </div>
+              <div className="flex justify-between items-center p-1 bg-gray-700 rounded">
+                <span className="text-gray-300 text-sm">Type:</span>
+                <span className="text-white font-bold text-sm">
+                  {currentMonster.type}
+                  {currentMonster.subtype && <span className="text-gray-200"> ({currentMonster.subtype})</span>}
+                </span>
+              </div>
+              <div className="flex justify-between items-center p-1 bg-gray-700 rounded">
+                <span className="text-gray-300 text-sm">CR:</span>
+                <span className="text-white font-bold">{currentMonster.challenge_rating}</span>
+              </div>
+              <div className="flex justify-between items-center p-1 bg-gray-700 rounded">
+                <span className="text-gray-300 text-sm">Size:</span>
+                <span className="text-white font-bold">{currentMonster.size}</span>
               </div>
               <div className="flex justify-between items-center p-1 bg-gray-700 rounded">
                 <span className="text-gray-300 text-sm">Speed:</span>

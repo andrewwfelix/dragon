@@ -1,5 +1,6 @@
 const OpenAI = require('openai');
 const path = require('path');
+const MONSTER_STYLE = require('./monster-style');
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -9,30 +10,76 @@ const openai = new OpenAI({
 /**
  * Generate a visual description for a D&D monster
  * @param {string} monsterName - The name of the monster
- * @param {Object} monsterData - Optional monster data for context
+ * @param {string} monsterDescription - The existing description of the monster
+ * @param {Object} options - Options for generation
+ * @param {string} options.style - Style of description (cinematic, atmospheric, etc.)
+ * @param {string} options.length - Length of description (short, medium, long)
+ * @param {string} options.focus - Focus of description (visual, threatening, etc.)
+ * @param {string} options.type - Monster type (dragon, humanoid, aberration, etc.)
+ * @param {Array} options.actions - Monster actions and attacks
+ * @param {Array} options.specialAbilities - Monster special abilities
  * @returns {Promise<string>} - The generated visual description
  */
-async function generateMonsterVisualDescription(monsterName, monsterData = null) {
-  const systemPrompt = `You are a master D&D dungeon master and fantasy artist who specializes in creating vivid, atmospheric visual descriptions of monsters. Your descriptions should be:
+async function generateMonsterVisualDescription(monsterName, monsterDescription, options = {}) {
+  const systemPrompt = `You are a master D&D dungeon master who creates ${MONSTER_STYLE.approach.tone} visual descriptions of monsters for players to read. Your descriptions should be:
 
-1. **Vivid and Sensory**: Use rich, descriptive language that appeals to all senses
-2. **Atmospheric**: Create a sense of mood and presence
-3. **Detailed but Concise**: 2-4 sentences maximum, focusing on the most striking visual elements
-4. **D&D Authentic**: Capture the essence of the monster as it would appear in a D&D setting
-5. **Immersive**: Make players feel like they're actually seeing the creature
+1. **${MONSTER_STYLE.quality.vivid}**
+2. **${MONSTER_STYLE.quality.atmospheric}**
+3. **${MONSTER_STYLE.quality.authentic}**
+4. **${MONSTER_STYLE.quality.immersive}**
+5. **${MONSTER_STYLE.approach.length}, focusing on the ${MONSTER_STYLE.approach.focus}**
+
+CRITICAL INSTRUCTIONS:
+- Every description must begin with '${MONSTER_STYLE.formatting.startPhrase} ...' and keep this style consistent for every monster.
+- ${MONSTER_STYLE.formatting.style}
+- DO NOT use imperative language like "${MONSTER_STYLE.formatting.imperativeLanguage.forbidden.join('", "')}"
+- Write as if you are describing what a person sees in front of them, not as instructions to an artist
+- Use descriptive language that paints a picture in the reader's mind
+
+IMPORTANT GUIDELINES:
+- ${MONSTER_STYLE.guidelines.noDescription}
+- ${MONSTER_STYLE.guidelines.minimalDescription}
+- ${MONSTER_STYLE.guidelines.incorporateAbilities}
+- ${MONSTER_STYLE.guidelines.visualEffects}
 
 Focus on:
-- Physical appearance (size, shape, distinctive features)
-- Movement and posture
-- Most intimidating or memorable visual elements
-- Any magical or supernatural visual effects
-- The overall impression it makes
+${MONSTER_STYLE.focusAreas.map(area => `- ${area}`).join('\n')}
 
-Write in present tense, as if describing what the players see right now.`;
+${MONSTER_STYLE.approach.perspective}.`;
 
-  const userPrompt = monsterData 
-    ? `Describe the visual appearance of a ${monsterName} (${monsterData.size || 'medium'} ${monsterData.type || 'creature'}, ${monsterData.alignment || 'unaligned'}). ${monsterData.armor_desc ? `It has ${monsterData.armor_desc}.` : ''} Focus on what makes this creature visually striking and memorable.`
-    : `Describe the visual appearance of a ${monsterName} in a D&D setting. Focus on what makes this creature visually striking and memorable.`;
+  const monsterType = options.type || 'creature';
+  const actions = options.actions || [];
+  const specialAbilities = options.specialAbilities || [];
+  
+  // Build context sections
+  const contextSections = [];
+  
+  if (monsterDescription && monsterDescription.trim()) {
+    contextSections.push(`Description: ${monsterDescription}`);
+  }
+  
+  if (actions.length > 0) {
+    const actionList = actions.map(action => `${action.name}: ${action.desc}`).join('; ');
+    contextSections.push(`Actions: ${actionList}`);
+  }
+  
+  if (specialAbilities.length > 0) {
+    const abilityList = specialAbilities.map(ability => `${ability.name}: ${ability.desc}`).join('; ');
+    contextSections.push(`Special Abilities: ${abilityList}`);
+  }
+  
+  const context = contextSections.length > 0 ? contextSections.join('\n\n') : 'No detailed information available.';
+  
+  const userPrompt = `Describe the visual appearance of a ${monsterName} (${monsterType}). 
+
+Context:
+${context}
+
+Write a ${MONSTER_STYLE.approach.tone} description of what this ${monsterType} looks like when encountered. Focus on what makes it visually striking and memorable. Always begin your description with '${MONSTER_STYLE.formatting.startPhrase} ...' and keep this style consistent for every monster. Consider the typical characteristics of ${monsterType}s in D&D lore while creating a ${MONSTER_STYLE.approach.tone} description. If the description is minimal, expand upon it using the monster type's typical characteristics and any visual cues from its abilities.
+
+Example of good description: "${MONSTER_STYLE.example.dragon}"
+
+Remember: Write as if describing what you see, not as instructions to create an image.`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -47,7 +94,7 @@ Write in present tense, as if describing what the players see right now.`;
           content: userPrompt
         }
       ],
-      max_tokens: 150,
+      max_tokens: 300,
       temperature: 0.7,
     });
 
@@ -121,17 +168,75 @@ async function testMonsterDescription() {
   console.log('🧙‍♂️ Testing monster visual description generation...\n');
   
   const testMonsters = [
-    { name: 'Dragon', data: { size: 'huge', type: 'dragon', alignment: 'chaotic evil', challenge_rating: '20', armor_desc: 'natural armor', hit_points: 400 } },
-    { name: 'Goblin', data: { size: 'small', type: 'humanoid', alignment: 'neutral evil', challenge_rating: '1/4', armor_desc: 'leather armor', hit_points: 7 } },
-    { name: 'Beholder', data: { size: 'large', type: 'aberration', alignment: 'lawful evil', challenge_rating: '13', armor_desc: 'natural armor', hit_points: 180 } }
+    { 
+      name: 'Adult Bronze Dragon', 
+      desc: 'Bronze dragons are coastal dwellers that feed primarily on aquatic plants and fish. They are known for their metallic bronze scales and affinity for water.',
+      type: 'dragon',
+      actions: [
+        { name: 'Bite', desc: 'Melee Weapon Attack: +14 to hit, reach 10 ft., one target.' },
+        { name: 'Breath Weapon', desc: 'The dragon exhales acid in a 60-foot line.' }
+      ],
+      specialAbilities: [
+        { name: 'Amphibious', desc: 'The dragon can breathe air and water.' },
+        { name: 'Legendary Resistance', desc: 'If the dragon fails a saving throw, it can choose to succeed instead.' }
+      ]
+    },
+    { 
+      name: 'Goblin', 
+      desc: 'Goblins are small, black-hearted humanoids that lair in caves, abandoned mines, despoiled dungeons, and other dismal settings.',
+      type: 'humanoid',
+      actions: [
+        { name: 'Scimitar', desc: 'Melee Weapon Attack: +4 to hit, reach 5 ft., one target.' },
+        { name: 'Shortbow', desc: 'Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target.' }
+      ],
+      specialAbilities: [
+        { name: 'Nimble Escape', desc: 'The goblin can take the Disengage or Hide action as a bonus action.' }
+      ]
+    },
+    { 
+      name: 'Beholder', 
+      desc: 'A beholder is an aberration that appears as a floating orb of flesh with a large mouth, single central eye, and many smaller eyestalks.',
+      type: 'aberration',
+      actions: [
+        { name: 'Eye Ray', desc: 'The beholder shoots one of the following magical eye rays.' },
+        { name: 'Bite', desc: 'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.' }
+      ],
+      specialAbilities: [
+        { name: 'Antimagic Cone', desc: 'The beholder\'s central eye creates an area of antimagic.' },
+        { name: 'Levitate', desc: 'The beholder can hover and fly without wings.' }
+      ]
+    },
+    { 
+      name: 'Shadow Demon', 
+      desc: '', // Minimal description to test fallback
+      type: 'fiend',
+      actions: [
+        { name: 'Claw', desc: 'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.' },
+        { name: 'Shadow Stealth', desc: 'While in dim light or darkness, the shadow demon can take the Hide action as a bonus action.' }
+      ],
+      specialAbilities: [
+        { name: 'Shadow Stealth', desc: 'While in dim light or darkness, the shadow demon can take the Hide action as a bonus action.' },
+        { name: 'Incorporeal Movement', desc: 'The shadow demon can move through other creatures and objects as if they were difficult terrain.' }
+      ]
+    }
   ];
 
   for (const monster of testMonsters) {
-    console.log(`\n🦖 ${monster.name.toUpperCase()}:`);
+    console.log(`\n🦖 ${monster.name.toUpperCase()} (${monster.type}):`);
     console.log('─'.repeat(50));
     
     try {
-      const description = await generateMonsterVisualDescription(monster.name, monster.data);
+      const description = await generateMonsterVisualDescription(
+        monster.name, 
+        monster.desc,
+        { 
+          type: monster.type, 
+          style: 'cinematic', 
+          length: 'medium',
+          actions: monster.actions,
+          specialAbilities: monster.specialAbilities
+        }
+      );
       console.log(description);
     } catch (error) {
       console.error(`❌ Error with ${monster.name}:`, error.message);
@@ -148,7 +253,7 @@ module.exports = {
 
 // Run test if called directly
 if (require.main === module) {
-  require(path.join(__dirname, '../backend/node_modules/dotenv')).config({ path: path.join(__dirname, '../.env.local') });
+  require('dotenv').config({ path: path.join(__dirname, '../backend/.env') });
   testMonsterDescription()
     .then(() => {
       console.log('\n✨ Test completed!');

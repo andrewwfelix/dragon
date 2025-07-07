@@ -263,4 +263,38 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
+// Get icon image for a monster type
+router.get('/type-icon/:type', async (req, res) => {
+  try {
+    const { type } = req.params;
+    
+    // Use direct Supabase REST API instead of client
+    const response = await fetch(`${process.env.SUPABASE_URL}/rest/v1/monster_types?type_name=ilike.${encodeURIComponent(type.toLowerCase())}&select=image_url&limit=1`, {
+      headers: {
+        'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
+        'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data || data.length === 0 || !data[0].image_url) {
+      return res.status(404).json({ error: 'Icon not found for this type' });
+    }
+    
+    const imageUrl = data[0].image_url;
+    console.log('DEBUG: Image URL for', type, ':', imageUrl);
+    
+    res.json({ icon_image: imageUrl });
+  } catch (error) {
+    console.error('Error fetching monster type icon:', error);
+    res.status(500).json({ error: 'Failed to fetch monster type icon' });
+  }
+});
+
 module.exports = router; 

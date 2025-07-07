@@ -80,13 +80,24 @@ async function generateAndUpdateVisualDescriptions(options = {}) {
       
       try {
         // Generate visual description
+        const monsterType = monster.data?.type || 'creature';
+        const monsterDesc = monster.data?.desc || '';
+        const monsterActions = monster.data?.actions || [];
+        const monsterSpecialAbilities = monster.data?.special_abilities || [];
+        
+        // Truncate description if too long (keep first 500 characters)
+        const truncatedDesc = monsterDesc.length > 500 ? monsterDesc.substring(0, 500) + '...' : monsterDesc;
+        
         const visualDescription = await generateMonsterVisualDescription(
           monster.name,
-          monster.data?.desc || 'No description available',
+          truncatedDesc,
           {
             style: options.style || 'cinematic',
             length: options.length || 'medium',
-            focus: options.focus || 'visual'
+            focus: options.focus || 'visual',
+            type: monsterType,
+            actions: monsterActions,
+            specialAbilities: monsterSpecialAbilities
           }
         );
         
@@ -131,8 +142,32 @@ async function testSpecificMonsters() {
   console.log('🧪 Testing with specific monsters...\n');
   
   const testMonsters = [
-    { name: 'Adult Bronze Dragon', desc: 'Bronze dragons are coastal dwellers that feed primarily on aquatic plants and fish.' },
-    { name: 'Beholder', desc: 'A beholder is an aberration that appears as a floating orb of flesh with a large mouth, single central eye, and many smaller eyestalks.' }
+    { 
+      name: 'Adult Bronze Dragon', 
+      desc: 'Bronze dragons are coastal dwellers that feed primarily on aquatic plants and fish.', 
+      type: 'dragon',
+      actions: [
+        { name: 'Bite', desc: 'Melee Weapon Attack: +14 to hit, reach 10 ft., one target.' },
+        { name: 'Breath Weapon', desc: 'The dragon exhales acid in a 60-foot line.' }
+      ],
+      specialAbilities: [
+        { name: 'Amphibious', desc: 'The dragon can breathe air and water.' },
+        { name: 'Legendary Resistance', desc: 'If the dragon fails a saving throw, it can choose to succeed instead.' }
+      ]
+    },
+    { 
+      name: 'Beholder', 
+      desc: 'A beholder is an aberration that appears as a floating orb of flesh with a large mouth, single central eye, and many smaller eyestalks.', 
+      type: 'aberration',
+      actions: [
+        { name: 'Eye Ray', desc: 'The beholder shoots one of the following magical eye rays.' },
+        { name: 'Bite', desc: 'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.' }
+      ],
+      specialAbilities: [
+        { name: 'Antimagic Cone', desc: 'The beholder\'s central eye creates an area of antimagic.' },
+        { name: 'Levitate', desc: 'The beholder can hover and fly without wings.' }
+      ]
+    }
   ];
   
   for (const monster of testMonsters) {
@@ -143,7 +178,13 @@ async function testSpecificMonsters() {
       const visualDescription = await generateMonsterVisualDescription(
         monster.name,
         monster.desc,
-        { style: 'cinematic', length: 'medium' }
+        { 
+          style: 'cinematic', 
+          length: 'medium', 
+          type: monster.type,
+          actions: monster.actions,
+          specialAbilities: monster.specialAbilities
+        }
       );
       
       console.log(`Generated: ${visualDescription}`);

@@ -1,6 +1,8 @@
 backend envrionment variables are here:
 C:\temp\dragon\backend\.env
 
+Use the SUPABASE API, NOT THE SUPABASE CLIENT
+
 this file contains these variables
 OPENAI_API_KEY
 POSTGRES_URL
