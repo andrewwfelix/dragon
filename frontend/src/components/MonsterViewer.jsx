@@ -9,26 +9,38 @@ function MonsterViewer() {
   const [isFetching, setIsFetching] = useState(false);
 
   const fetchRandomMonster = async () => {
+    // Prevent multiple simultaneous requests
+    if (isFetching) return;
+    
+    setIsFetching(true);
     setLoading(true);
     setError(null);
+    
     try {
       const response = await fetch('/api/monsters');
       if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please wait a moment before trying again.');
+        }
         throw new Error('Failed to fetch random monster');
       }
       const monster = await response.json();
       setCurrentMonster(monster);
       
-      const countResponse = await fetch('/api/monsters?limit=1');
-      if (countResponse.ok) {
-        const countData = await countResponse.json();
-        setMonsterCount(countData.pagination.total);
+      // Only fetch count if we don't have it yet
+      if (monsterCount === 0) {
+        const countResponse = await fetch('/api/monsters?limit=1');
+        if (countResponse.ok) {
+          const countData = await countResponse.json();
+          setMonsterCount(countData.pagination.total);
+        }
       }
     } catch (error) {
       console.error('Error fetching monster:', error);
-      setError('Failed to load monster');
+      setError(error.message || 'Failed to load monster');
     } finally {
       setLoading(false);
+      setIsFetching(false);
     }
   };
 
@@ -126,9 +138,14 @@ function MonsterViewer() {
             </div>
             <button
               onClick={nextMonster}
-              className="px-4 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold text-sm transition-colors duration-200"
+              disabled={isFetching}
+              className={`px-4 py-1 rounded font-bold text-sm transition-colors duration-200 ${
+                isFetching 
+                  ? 'bg-gray-500 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-500 text-white'
+              }`}
             >
-              Random Monster →
+              {isFetching ? 'Loading...' : 'Random Monster →'}
             </button>
           </div>
         </div>
