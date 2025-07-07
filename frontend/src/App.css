@@ -1,1 +1,19 @@
-/* Additional custom styles can go here */ 
+/* Additional custom styles can go here */
+
+/* ReactMarkdown styles for monster descriptions */
+.inline {
+  display: inline;
+}
+
+.inline em {
+  font-style: italic;
+}
+
+.inline strong {
+  font-weight: bold;
+}
+
+.inline p {
+  margin: 0;
+  display: inline;
+} 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 function MonsterViewer() {
   const [currentMonster, setCurrentMonster] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [monsterCount, setMonsterCount] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchRandomMonster = async () => {
     setLoading(true);
@@ -49,6 +51,29 @@ function MonsterViewer() {
     }
     return `${speed} ft.`;
   };
+
+  const parseDescription = (desc) => {
+    if (!desc) return { mainDescription: '', traits: [] };
+    
+    // Split by bold markers (**Trait Name.**)
+    const parts = desc.split(/\*\*(.*?)\*\*\./);
+    const mainDescription = parts[0].trim();
+    const traits = [];
+    
+    // Extract traits (every odd index after splitting)
+    for (let i = 1; i < parts.length; i += 2) {
+      if (parts[i] && parts[i + 1]) {
+        traits.push({
+          name: parts[i].trim(),
+          description: parts[i + 1].trim()
+        });
+      }
+    }
+    
+    return { mainDescription, traits };
+  };
+
+
 
   if (loading) {
     return (
@@ -110,25 +135,47 @@ function MonsterViewer() {
       </div>
 
       {/* Monster Description */}
-      {(currentMonster.desc || currentMonster.legendary_desc) && (
+      {((currentMonster.desc && currentMonster.desc !== 'False') || currentMonster.legendary_desc) && (
         <div className="bg-gray-800 border border-gray-700 rounded p-3 mb-2">
-          <h2 className="text-white mb-2 font-bold text-sm">Description</h2>
           <div className="text-gray-300 text-sm leading-relaxed">
-            {currentMonster.desc && (
-              <div className="mb-2">
-                {currentMonster.desc}
+            {currentMonster.desc && currentMonster.desc !== 'False' && (
+              <div className="mb-3">
+                <span className="text-blue-400 font-bold">Description:</span>
+                <div className="inline">
+                  <ReactMarkdown>{currentMonster.desc}</ReactMarkdown>
+                </div>
               </div>
             )}
             {currentMonster.legendary_desc && (
               <div>
-                <span className="text-blue-400 font-bold">Legendary:</span> {currentMonster.legendary_desc}
+                <span className="text-blue-400 font-bold">Legendary:</span>
+                <div className="inline">
+                  <ReactMarkdown>{currentMonster.legendary_desc}</ReactMarkdown>
+                </div>
               </div>
             )}
           </div>
         </div>
       )}
 
-
+      {/* Special Traits Section */}
+      {currentMonster.special_traits && currentMonster.special_traits.length > 0 && (
+        <div className="bg-gray-800 border border-gray-700 rounded p-3 mb-2">
+          <h2 className="text-white mb-2 font-bold text-sm">Special Traits</h2>
+          <div className="space-y-2">
+            {currentMonster.special_traits.map((trait, index) => (
+              <div key={index} className="p-2 bg-gray-700 rounded">
+                <div className="text-gray-300 text-sm">
+                  <span className="text-blue-400 font-bold">{trait.name}: </span>
+                  <div className="inline">
+                    <ReactMarkdown>{trait.description}</ReactMarkdown>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Two Column Layout - Left 1/4, Right 3/4 */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 mb-2">
@@ -277,7 +324,10 @@ function MonsterViewer() {
                 {currentMonster.actions.map((action, index) => (
                   <div key={index} className="p-2 bg-gray-700 rounded">
                     <div className="text-gray-300 text-sm">
-                      <span className="text-blue-400 font-bold">{action.name}:</span> {action.desc}
+                      <span className="text-blue-400 font-bold">{action.name}: </span>
+                      <div className="inline">
+                        <ReactMarkdown>{action.desc}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -293,7 +343,10 @@ function MonsterViewer() {
                 {currentMonster.legendary_actions.map((action, index) => (
                   <div key={index} className="p-2 bg-gray-700 rounded">
                     <div className="text-gray-300 text-sm">
-                      <span className="text-blue-400 font-bold">{action.name}:</span> {action.desc}
+                      <span className="text-blue-400 font-bold">{action.name}: </span>
+                      <div className="inline">
+                        <ReactMarkdown>{action.desc}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -309,7 +362,10 @@ function MonsterViewer() {
                 {currentMonster.special_abilities.map((ability, index) => (
                   <div key={index} className="p-2 bg-gray-700 rounded">
                     <div className="text-gray-300 text-sm">
-                      <span className="text-blue-400 font-bold">{ability.name}:</span> {ability.desc}
+                      <span className="text-blue-400 font-bold">{ability.name}: </span>
+                      <div className="inline">
+                        <ReactMarkdown>{ability.desc}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -45,6 +45,12 @@ router.get('/', async (req, res) => {
       
       // Merge structured columns with JSONB data
       const fullData = { ...monster.data };
+      
+      // Fix "False" description values
+      if (fullData.desc === 'False' || fullData.desc === false) {
+        delete fullData.desc;
+      }
+      
       // Override with structured columns (these take precedence)
       Object.assign(fullData, {
         id: monster.id,
@@ -66,6 +72,7 @@ router.get('/', async (req, res) => {
         intelligence: monster.intelligence,
         wisdom: monster.wisdom,
         charisma: monster.charisma,
+        special_traits: monster.special_traits || [],
         created_at: monster.created_at,
         updated_at: monster.updated_at
       });
@@ -116,6 +123,12 @@ router.get('/', async (req, res) => {
     // Merge structured columns with JSONB data
     const mergedData = data.map(monster => {
       const fullData = { ...monster.data };
+      
+      // Fix "False" description values
+      if (fullData.desc === 'False' || fullData.desc === false) {
+        delete fullData.desc;
+      }
+      
       // Override with structured columns (these take precedence)
       Object.assign(fullData, {
         id: monster.id,
@@ -137,6 +150,7 @@ router.get('/', async (req, res) => {
         intelligence: monster.intelligence,
         wisdom: monster.wisdom,
         charisma: monster.charisma,
+        special_traits: monster.special_traits || [],
         created_at: monster.created_at,
         updated_at: monster.updated_at
       });
@@ -237,6 +251,7 @@ router.get('/:slug', async (req, res) => {
       intelligence: data.intelligence,
       wisdom: data.wisdom,
       charisma: data.charisma,
+      special_traits: data.special_traits || [],
       created_at: data.created_at,
       updated_at: data.updated_at
     });

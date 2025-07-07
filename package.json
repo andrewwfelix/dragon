@@ -10,10 +10,19 @@
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "dev": "npm start"
   },
-  "keywords": ["dnd", "dungeons-dragons", "react", "nodejs", "supabase"],
+  "keywords": [
+    "dnd",
+    "dungeons-dragons",
+    "react",
+    "nodejs",
+    "supabase"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "react-markdown": "^10.1.0"
   }
-} 
+}
