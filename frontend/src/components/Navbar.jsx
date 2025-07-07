@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sword, Users, BookOpen, Zap, Home, Menu, X } from 'lucide-react';
+import { Sword, Users, BookOpen, Zap, Home, Menu, X, Zap as ZapIcon } from 'lucide-react';
 
 // Import version from package.json
 const version = import.meta.env.VITE_APP_VERSION || '1.0.0';
@@ -15,6 +15,7 @@ const Navbar = () => {
     { path: '/monsters', label: 'Monsters', icon: Sword },
     { path: '/spells', label: 'Spells', icon: Zap },
     { path: '/encounters', label: 'Encounters', icon: BookOpen },
+    { path: '/combat', label: 'Combat', icon: ZapIcon },
   ];
 
   const isActive = (path) => location.pathname === path;

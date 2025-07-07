@@ -8,6 +8,7 @@ import Monsters from './pages/Monsters';
 import Spells from './pages/Spells';
 import Encounters from './pages/Encounters';
 import CharacterBuilder from './pages/CharacterBuilder';
+import Combat from './pages/Combat';
 import './App.css';
 
 // Create a client
@@ -34,6 +35,7 @@ function App() {
               <Route path="/monsters" element={<Monsters />} />
               <Route path="/spells" element={<Spells />} />
               <Route path="/encounters" element={<Encounters />} />
+              <Route path="/combat" element={<Combat />} />
             </Routes>
           </main>
         </div>
