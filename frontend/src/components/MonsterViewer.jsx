@@ -176,7 +176,12 @@ function MonsterViewer() {
               <h1 className="text-2xl font-bold text-white">{currentMonster.name}</h1>
             </div>
           </div>
-
+          <button
+            onClick={fetchRandomMonster}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors"
+          >
+            Next Monster
+          </button>
         </div>
       </div>
 
