@@ -155,33 +155,25 @@ function MonsterViewer() {
     <div className="w-full p-2">
       {/* Single Top Container */}
       <div className="bg-gray-800 border border-gray-700 rounded p-2 mb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Monster Type Icon */}
-            {typeIconUrl && (
-              <div className="flex-shrink-0">
-                <img
-                  src={typeIconUrl}
-                  alt={`${currentMonster.type} icon`}
-                  className="w-12 h-12 object-contain rounded shadow-lg border border-gray-700 bg-black"
-                  style={{ background: 'black' }}
-                  onError={(e) => {
-                    console.log('❌ Image failed to load:', e.target.src);
-                    e.target.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-bold text-white">{currentMonster.name}</h1>
+        <div className="flex items-center gap-3">
+          {/* Monster Type Icon */}
+          {typeIconUrl && (
+            <div className="flex-shrink-0">
+              <img
+                src={typeIconUrl}
+                alt={`${currentMonster.type} icon`}
+                className="w-12 h-12 object-contain rounded shadow-lg border border-gray-700 bg-black"
+                style={{ background: 'black' }}
+                onError={(e) => {
+                  console.log('❌ Image failed to load:', e.target.src);
+                  e.target.style.display = 'none';
+                }}
+              />
             </div>
+          )}
+          <div>
+            <h1 className="text-2xl font-bold text-white">{currentMonster.name}</h1>
           </div>
-          <button
-            onClick={fetchRandomMonster}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors"
-          >
-            Next Monster
-          </button>
         </div>
       </div>
 

@@ -125,27 +125,19 @@ function SpellViewer() {
     <div className="w-full p-2">
       {/* Single Top Container */}
       <div className="bg-gray-800 border border-gray-700 rounded p-2 mb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-white">{currentSpell.name}</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-blue-400 font-bold">{getLevelText(currentSpell.level)}</span>
-                <span className="text-gray-400">•</span>
-                <span className={`font-bold ${getSchoolColor(currentSpell.school)}`}>
-                  {schoolName}
-                </span>
-                <span className="text-gray-400">•</span>
-                <span className="text-gray-300">{currentSpell.casting_time}</span>
-              </div>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{currentSpell.name}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-blue-400 font-bold">{getLevelText(currentSpell.level)}</span>
+              <span className="text-gray-400">•</span>
+              <span className={`font-bold ${getSchoolColor(currentSpell.school)}`}>
+                {schoolName}
+              </span>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-300">{currentSpell.casting_time}</span>
             </div>
           </div>
-          <button
-            onClick={fetchRandomSpell}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors"
-          >
-            Next Spell
-          </button>
         </div>
       </div>
 
